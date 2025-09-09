@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click to Breathe - Meditation Companion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                },
+            },
+            darkMode: 'class',
+        }
+    </script>
+    <style>
+        .bg-gradient-animate {
+            background-size: 200% 200%;
+            transition: background-position 1s ease;
+        }
+        
+        .circle-shadow {
+            box-shadow: 0 0 15px rgba(93, 92, 222, 0.3);
+        }
+        
+        .dark .circle-shadow {
+            box-shadow: 0 0 20px rgba(93, 92, 222, 0.5);
+        }
+        
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .float {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        .breathe-expand {
+            transition: all 4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+    </style>
+</head>
+<body class="transition-colors duration-1000 min-h-screen flex flex-col items-center justify-center p-4 bg-white dark:bg-gray-900">
+    <div id="app" class="w-full max-w-md text-center">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Click to Breathe</h1>
+        <div id="breathingCircle" class="relative w-72 h-72 mx-auto mb-8 rounded-full transition-all duration-1000 flex items-center justify-center bg-gradient-animate circle-shadow">
+            <div id="innerCircle" class="absolute w-48 h-48 rounded-full bg-white dark:bg-gray-800 flex items-center justify-center transition-all breathe-expand">
+                <div class="relative flex flex-col items-center justify-center">
+                    <div id="focusElement" class="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-blue-400 mb-2 float"></div>
+                    <span id="breatheText" class="text-2xl font-medium text-gray-700 dark:text-gray-200">Ready</span>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-center space-x-4 mb-8">
+            <button id="startBtn" class="px-6 py-2 bg-primary text-white rounded-full hover:bg-opacity-90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 dark:focus:ring-opacity-70">
+                Start
+            </button>
+            <button id="settingsBtn" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-opacity-90 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:focus:ring-opacity-70">
+                Settings
+            </button>
+        </div>
+        <div id="settingsPanel" class="hidden bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mb-6">
+            <h2 class="text-lg font-medium mb-3 text-gray-800 dark:text-white">Customize Your Breathing</h2>
+            <div class="grid grid-cols-1 gap-4 text-left">
+                <div>
+                    <label for="inhaleTime" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Inhale (seconds)</label>
+                    <input type="range" min="2" max="8" value="4" class="w-full mt-1" id="inhaleTime">
+                    <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400">
+                        <span>2s</span>
+                        <span id="inhaleValue">4s</span>
+                        <span>8s</span>
+                    </div>
+                </div>
+                <div>
+                    <label for="holdTime" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Hold (seconds)</label>
+                    <input type="range" min="0" max="8" value="4" class="w-full mt-1" id="holdTime">
+                    <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400">
+                        <span>0s</span>
+                        <span id="holdValue">4s</span>
+                        <span>8s</span>
+                    </div>
+                </div>
+                <div>
+                    <label for="exhaleTime" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Exhale (seconds)</label>
+                    <input type="range" min="2" max="10" value="6" class="w-full mt-1" id="exhaleTime">
+                    <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400">
+                        <span>2s</span>
+                        <span id="exhaleValue">6s</span>
+                        <span>10s</span>
+                    </div>
+                </div>
+                <div>
+                    <label for="sessionDuration" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Session Duration (minutes)</label>
+                    <select id="sessionDuration" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="1">1 minute</option>
+                        <option value="3">3 minutes</option>
+                        <option value="5" selected>5 minutes</option>
+                        <option value="10">10 minutes</option>
+                        <option value="15">15 minutes</option>
+                        <option value="20">20 minutes</option>
+                        <option value="30">30 minutes</option>
+                        <option value="-1">Continuous</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div id="progressContainer" class="w-full bg-gray-200 rounded-full h-2.5 mb-4 dark:bg-gray-700 hidden">
+            <div id="progressBar" class="bg-primary h-2.5 rounded-full" style="width: 0%"></div>
+        </div>
+        <div id="timerDisplay" class="text-sm text-gray-600 dark:text-gray-400 hidden"></div>
+    </div>
+
+    <script>
+        // Setup dark mode detection
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        // DOM elements
+        const startBtn = document.getElementById('startBtn');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const breathingCircle = document.getElementById('breathingCircle');
+        const innerCircle = document.getElementById('innerCircle');
+        const breatheText = document.getElementById('breatheText');
+        const progressBar = document.getElementById('progressBar');
+        const progressContainer = document.getElementById('progressContainer');
+        const timerDisplay = document.getElementById('timerDisplay');
+        
+        // Settings elements
+        const inhaleTimeSlider = document.getElementById('inhaleTime');
+        const holdTimeSlider = document.getElementById('holdTime');
+        const exhaleTimeSlider = document.getElementById('exhaleTime');
+        const inhaleValue = document.getElementById('inhaleValue');
+        const holdValue = document.getElementById('holdValue');
+        const exhaleValue = document.getElementById('exhaleValue');
+        const sessionDurationSelect = document.getElementById('sessionDuration');
+
+        // State variables
+        let isBreathing = false;
+        let breathingInterval;
+        let phase = 'ready'; // ready, inhale, hold, exhale
+        let elapsedTime = 0;
+        let sessionDuration = parseInt(sessionDurationSelect.value) * 60; // in seconds
+        let startTime;
+        let progressTimer;
+        
+        // Settings
+        let settings = {
+            inhaleTime: parseInt(inhaleTimeSlider.value), // seconds
+            holdTime: parseInt(holdTimeSlider.value), // seconds
+            exhaleTime: parseInt(exhaleTimeSlider.value), // seconds
+        };
+
+        // Gradient color palettes
+        const colorPalettes = [
+            ['linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)', 'linear-gradient(135deg, #43cbff 0%, #2c75ff 100%)'], // Blue shades
+            ['linear-gradient(135deg, #c1ffd7 0%, #50c878 100%)', 'linear-gradient(135deg, #81fbb8 0%, #28c76f 100%)'], // Green shades
+            ['linear-gradient(135deg, #fceed1 0%, #fcb69f 100%)', 'linear-gradient(135deg, #fec163 0%, #ff7863 100%)'], // Orange shades
+            ['linear-gradient(135deg, #e2b0ff 0%, #9f66ff 100%)', 'linear-gradient(135deg, #bf8aff 0%, #7537ff 100%)'], // Purple shades
+            ['linear-gradient(135deg, #90f7ec 0%, #32ccbc 100%)', 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)']  // Teal shades
+        ];
+        let currentPalette = 0;
+
+        // Initialize sliders
+        inhaleTimeSlider.addEventListener('input', function() {
+            settings.inhaleTime = parseInt(this.value);
+            inhaleValue.textContent = `${settings.inhaleTime}s`;
+        });
+
+        holdTimeSlider.addEventListener('input', function() {
+            settings.holdTime = parseInt(this.value);
+            holdValue.textContent = `${settings.holdTime}s`;
+        });
+
+        exhaleTimeSlider.addEventListener('input', function() {
+            settings.exhaleTime = parseInt(this.value);
+            exhaleValue.textContent = `${settings.exhaleTime}s`;
+        });
+
+        sessionDurationSelect.addEventListener('change', function() {
+            const value = parseInt(this.value);
+            sessionDuration = value === -1 ? -1 : value * 60; // -1 means continuous
+            if (isBreathing) {
+                resetProgress();
+                startProgress();
+            }
+        });
+
+        // Toggle settings panel
+        settingsBtn.addEventListener('click', function() {
+            settingsPanel.classList.toggle('hidden');
+        });
+
+        // Start/Pause breathing
+        startBtn.addEventListener('click', function() {
+            if (!isBreathing) {
+                startBreathing();
+                startBtn.textContent = 'Pause';
+            } else {
+                pauseBreathing();
+                startBtn.textContent = 'Resume';
+            }
+        });
+
+        function startBreathing() {
+            isBreathing = true;
+            settingsPanel.classList.add('hidden');
+            progressContainer.classList.remove('hidden');
+            timerDisplay.classList.remove('hidden');
+            
+            if (phase === 'ready') {
+                phase = 'inhale';
+                startPhase();
+            }
+            
+            breathingInterval = setInterval(breathingCycle, 100);
+            startProgress();
+        }
+
+        function pauseBreathing() {
+            isBreathing = false;
+            clearInterval(breathingInterval);
+            clearInterval(progressTimer);
+        }
+
+        function resetBreathing() {
+            pauseBreathing();
+            phase = 'ready';
+            breatheText.textContent = 'Ready';
+            
+            // Reset circle sizes
+            innerCircle.style.width = '60%';
+            innerCircle.style.height = '60%';
+            breathingCircle.style.transform = 'scale(1)';
+            
+            // Reset focus element
+            const focusElement = document.getElementById('focusElement');
+            if (focusElement) {
+                focusElement.style.transform = 'scale(1)';
+            }
+            
+            // Reset background
+            document.body.style.background = '';
+            breathingCircle.style.background = '';
+            
+            // Update UI
+            startBtn.textContent = 'Start';
+            progressContainer.classList.add('hidden');
+            timerDisplay.classList.add('hidden');
+            resetProgress();
+            
+            // Reset gradient animation
+            breathingCircle.style.backgroundPosition = 'left top';
+        }
+
+        function breathingCycle() {
+            if (phase === 'inhale') {
+                const progress = Math.min((Date.now() - startTime) / (settings.inhaleTime * 1000), 1);
+                setCircleSize(48 + progress * 32); // Scale from 48 to 80
+                if (progress >= 1) {
+                    if (settings.holdTime > 0) {
+                        phase = 'hold';
+                    } else {
+                        phase = 'exhale';
+                    }
+                    startPhase();
+                }
+            } else if (phase === 'hold') {
+                const progress = Math.min((Date.now() - startTime) / (settings.holdTime * 1000), 1);
+                if (progress >= 1) {
+                    phase = 'exhale';
+                    startPhase();
+                }
+            } else if (phase === 'exhale') {
+                const progress = Math.min((Date.now() - startTime) / (settings.exhaleTime * 1000), 1);
+                setCircleSize(80 - progress * 32); // Scale from 80 to 48
+                if (progress >= 1) {
+                    phase = 'inhale';
+                    startPhase();
+                    // Change color palette for next cycle
+                    currentPalette = (currentPalette + 1) % colorPalettes.length;
+                }
+            }
+        }
+
+        function startPhase() {
+            startTime = Date.now();
+            
+            if (phase === 'inhale') {
+                breatheText.textContent = 'Inhale';
+                // Start color transition
+                setBackgroundGradient(0);
+            } else if (phase === 'hold') {
+                breatheText.textContent = 'Hold';
+            } else if (phase === 'exhale') {
+                breatheText.textContent = 'Exhale';
+                // Complete color transition
+                setBackgroundGradient(1);
+            }
+        }
+
+        function setCircleSize(size) {
+            const percent = (size / 80) * 100;
+            innerCircle.style.width = `${percent}%`;
+            innerCircle.style.height = `${percent}%`;
+            
+            // Scale outer circle slightly based on inner circle size
+            const outerScale = 1 + ((percent - 60) / 300);
+            breathingCircle.style.transform = `scale(${outerScale})`;
+            
+            // Adjust focus element size slightly for more visual feedback
+            const focusElement = document.getElementById('focusElement');
+            if (focusElement) {
+                const focusScale = 1 + ((percent - 60) / 200);
+                focusElement.style.transform = `scale(${focusScale})`;
+            }
+        }
+
+        function setBackgroundGradient(progress) {
+            const colors = colorPalettes[currentPalette];
+            const isDark = document.documentElement.classList.contains('dark');
+            const focusElement = document.getElementById('focusElement');
+            
+            if (isDark) {
+                // Dark mode gradient transitions
+                document.body.style.background = progress === 0 
+                    ? 'linear-gradient(135deg, #2d3748 0%, #1a202c 100%)' 
+                    : 'linear-gradient(135deg, #1a202c 0%, #171923 100%)';
+                
+                // Apply gradient to the breathing circle
+                breathingCircle.style.background = colors[progress];
+                breathingCircle.style.opacity = progress === 0 ? '0.6' : '0.8';
+                
+                // Update focus element gradient
+                if (focusElement) {
+                    focusElement.style.background = progress === 0
+                        ? 'linear-gradient(to right, #6366f1, #3b82f6)'
+                        : 'linear-gradient(to right, #8b5cf6, #6366f1)';
+                }
+            } else {
+                // Light mode gradient transitions
+                document.body.style.background = progress === 0
+                    ? 'linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%)'
+                    : 'linear-gradient(135deg, #edf2f7 0%, #e2e8f0 100%)';
+                
+                // Apply gradient to the breathing circle
+                breathingCircle.style.background = colors[progress];
+                breathingCircle.style.opacity = '0.9';
+                
+                // Update focus element gradient
+                if (focusElement) {
+                    focusElement.style.background = progress === 0
+                        ? 'linear-gradient(to right, #5D5CDE, #4f46e5)'
+                        : 'linear-gradient(to right, #4f46e5, #3b82f6)';
+                }
+            }
+            
+            // Create subtle background position animation
+            breathingCircle.style.backgroundPosition = progress === 0 ? 'left top' : 'right bottom';
+        }
+
+        function startProgress() {
+            if (sessionDuration === -1) {
+                // Continuous mode
+                timerDisplay.textContent = 'Continuous session';
+                progressBar.style.width = '100%';
+                return;
+            }
+            
+            elapsedTime = 0;
+            startTime = Date.now();
+            
+            progressTimer = setInterval(() => {
+                elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+                const remaining = sessionDuration - elapsedTime;
+                
+                if (remaining <= 0) {
+                    resetBreathing();
+                    return;
+                }
+                
+                const minutes = Math.floor(remaining / 60);
+                const seconds = remaining % 60;
+                timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')} remaining`;
+                
+                const progress = (elapsedTime / sessionDuration) * 100;
+                progressBar.style.width = `${progress}%`;
+            }, 1000);
+        }
+
+        function resetProgress() {
+            clearInterval(progressTimer);
+            progressBar.style.width = '0%';
+            elapsedTime = 0;
+            timerDisplay.textContent = '';
+        }
+
+        // Initialize display
+        inhaleValue.textContent = `${settings.inhaleTime}s`;
+        holdValue.textContent = `${settings.holdTime}s`;
+        exhaleValue.textContent = `${settings.exhaleTime}s`;
+    </script>
+</body>
+</html>
